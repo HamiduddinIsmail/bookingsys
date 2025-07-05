@@ -1,0 +1,719 @@
+<div class="sales-report-wrapper">
+    <!-- Modern Sales Report Header -->
+    <div class="sales-report-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1 class="header-title">Sales Dashboard</h1>
+            <p class="header-subtitle">Track your sales performance and booking analytics</p>
+        </div>
+    </div>
+
+    <!-- Modern Sales Report Content -->
+    <div class="sales-report-section">
+        <div class="report-container">
+            <div class="modern-report-content">
+                
+                <!-- Sales Metrics Cards -->
+                <div class="metrics-section">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h4>Annual Sales</h4>
+                                <p class="metric-value">RM<%= earnings.reduce((sum, earning) => sum + (earning.earnings || 0), 0).toFixed(2) %></p>
+                                <span class="metric-label">Total this year</span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h4>Current Month</h4>
+                                <p class="metric-value">RM<%= earnings.length > 0 ? (earnings[0].earnings || 0).toFixed(2) : '0.00' %></p>
+                                <span class="metric-label">This month's sales</span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h4>Today's Sales</h4>
+                                <p class="metric-value">RM<%= todaySales || '0.00' %></p>
+                                <span class="metric-label">Today's bookings</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Trend Chart -->
+                <div class="report-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="section-title">Sales Trend</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-period="yearly">
+                                <i class="fas fa-calendar-alt"></i> Yearly
+                            </button>
+                            <button class="chart-btn" data-period="monthly">
+                                <i class="fas fa-calendar"></i> Monthly
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="salesChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Demand Analysis -->
+                <div class="report-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="section-title">Demand Analysis</h3>
+                    </div>
+                    
+                    <div class="demand-analysis">
+                        <div class="demand-grid">
+                            <div class="demand-card high-demand">
+                                <div class="demand-header">
+                                    <i class="fas fa-fire"></i>
+                                    <h4>High Demand Courts</h4>
+                                </div>
+                                <div class="demand-list">
+                                    <% if (courtDemand && courtDemand.high.length > 0) { %>
+                                        <% courtDemand.high.forEach(function(court) { %>
+                                            <div class="demand-item">
+                                                <span class="court-name"><%= court.name %></span>
+                                                <span class="demand-count"><%= court.bookings %> bookings</span>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p class="no-data">No high demand courts yet</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <div class="demand-card low-demand">
+                                <div class="demand-header">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h4>Low Demand Courts</h4>
+                                </div>
+                                <div class="demand-list">
+                                    <% if (courtDemand && courtDemand.low.length > 0) { %>
+                                        <% courtDemand.low.forEach(function(court) { %>
+                                            <div class="demand-item">
+                                                <span class="court-name"><%= court.name %></span>
+                                                <span class="demand-count"><%= court.bookings %> bookings</span>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p class="no-data">No low demand courts</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings -->
+                <div class="report-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="section-title">Recent Bookings</h3>
+                    </div>
+                    
+                    <div class="recent-bookings">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-court"></i> Court</th>
+                                    <th><i class="fas fa-user"></i> Player</th>
+                                    <th><i class="fas fa-calendar"></i> Date</th>
+                                    <th><i class="fas fa-clock"></i> Time</th>
+                                    <th><i class="fas fa-money-bill"></i> Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (recentBookings && recentBookings.length > 0) { %>
+                                    <% recentBookings.forEach(function(booking) { %>
+                                        <tr>
+                                            <td><strong><%= booking.court_name %></strong></td>
+                                            <td><%= booking.player_name %></td>
+                                            <td><%= booking.booking_date %></td>
+                                            <td><%= booking.start_time %> - <%= booking.end_time %></td>
+                                            <td class="booking-amount">RM<%= booking.total_amount %></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr class="empty-state">
+                                        <td colspan="5">
+                                            <div class="empty-content">
+                                                <i class="fas fa-calendar-times"></i>
+                                                <p>No recent bookings</p>
+                                                <span>Bookings will appear here as they come in</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Prepare sales data from backend
+const yearlySales = <%- JSON.stringify(yearlySales) %>;
+const monthlySales = <%- JSON.stringify(monthlySales) %>;
+
+const salesData = {
+    yearly: {
+        labels: yearlySales.map(item => item.month),
+        data: yearlySales.map(item => item.sales)
+    },
+    monthly: {
+        labels: monthlySales.map(item => item.day),
+        data: monthlySales.map(item => item.sales)
+    }
+};
+
+// Initialize sales chart only
+let salesChart;
+
+function initCharts() {
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    salesChart = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: salesData.yearly.labels,
+            datasets: [{
+                label: 'Sales (RM)',
+                data: salesData.yearly.data,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(102, 126, 234, 0.1)' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initCharts();
+    const chartBtns = document.querySelectorAll('.chart-btn');
+    chartBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            chartBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const period = this.dataset.period;
+            updateSalesChart(period);
+        });
+    });
+});
+
+function updateSalesChart(period) {
+    const data = salesData[period];
+    salesChart.data.labels = data.labels;
+    salesChart.data.datasets[0].data = data.data;
+    salesChart.update();
+}
+</script>
+
+<style>
+/* Modern Sales Report Page Styles */
+.sales-report-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px);
+}
+
+.sales-report-header {
+  background: transparent;
+  padding: 4rem 0;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  margin-top: 5vh;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Sales Report Section */
+.sales-report-section {
+  margin-bottom: 3rem;
+}
+
+.report-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.modern-report-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Metrics Section */
+.metrics-section {
+  margin-bottom: 3rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+}
+
+.metric-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.metric-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin: 0 0 0.5rem 0;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+/* Report Sections */
+.report-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.report-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* Chart Controls */
+.chart-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.chart-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.chart-btn:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+.chart-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: #667eea;
+}
+
+/* Chart Container */
+.chart-container {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+  height: 400px;
+  position: relative;
+  margin-top: 1.2rem;
+}
+
+/* Demand Analysis */
+.demand-analysis {
+  margin-top: 2rem;
+}
+
+.demand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.demand-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+}
+
+.demand-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.demand-header i {
+  font-size: 1.5rem;
+  color: #667eea;
+}
+
+.demand-header h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.high-demand .demand-header i {
+  color: #27ae60;
+}
+
+.low-demand .demand-header i {
+  color: #e74c3c;
+}
+
+.demand-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.demand-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.demand-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.court-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.demand-count {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.no-data {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  margin: 2rem 0;
+}
+
+/* Modern Table Styles */
+.modern-table {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+}
+
+.modern-table thead th {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 1.5rem 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+}
+
+.modern-table thead th i {
+  margin-right: 0.5rem;
+  opacity: 0.9;
+}
+
+.modern-table tbody td {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.modern-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.modern-table tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.booking-amount {
+  color: #27ae60;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Empty State */
+.empty-state td {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-content i {
+  font-size: 3rem;
+  color: #bdc3c7;
+  margin-bottom: 1rem;
+}
+
+.empty-content p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.empty-content span {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .modern-report-content {
+    padding: 2rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .metric-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .demand-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .chart-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .chart-container {
+    height: 300px;
+    padding: 1rem;
+  }
+  
+  .modern-table {
+    font-size: 0.9rem;
+  }
+  
+  .modern-table thead th,
+  .modern-table tbody td {
+    padding: 1rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-container {
+    padding: 0 1rem;
+  }
+  
+  .modern-report-content {
+    padding: 1.5rem;
+  }
+  
+  .header-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+    .chart-controls {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.3rem;
+    }
+}
+</style> 

@@ -1,0 +1,296 @@
+<div class="auth-bg-gradient"></div>
+<div class="auth-container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="auth-card glass-card p-5">
+        <div class="text-center mb-4">
+            <div class="auth-icon mb-2">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h2 class="auth-title mb-2">Create Account</h2>
+            <p class="auth-subtitle">Join our badminton community today!</p>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger glass-alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form method="POST" action="/auth/register" class="needs-validation" novalidate autocomplete="on">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">
+                        <i class="fas fa-user me-2"></i>First Name
+                    </label>
+                    <input type="text" class="form-control glass-input" id="first_name" name="first_name" required>
+                    <div class="invalid-feedback">
+                        Please enter your first name.
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="last_name" class="form-label">
+                        <i class="fas fa-user me-2"></i>Last Name
+                    </label>
+                    <input type="text" class="form-control glass-input" id="last_name" name="last_name" required>
+                    <div class="invalid-feedback">
+                        Please enter your last name.
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">
+                    <i class="fas fa-at me-2"></i>Username
+                </label>
+                <input type="text" class="form-control glass-input" id="username" name="username" required>
+                <div class="invalid-feedback">
+                    Please choose a username.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope me-2"></i>Email Address
+                </label>
+                <input type="email" class="form-control glass-input" id="email" name="email" required>
+                <div class="invalid-feedback">
+                    Please enter a valid email address.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock me-2"></i>Password
+                </label>
+                <div class="input-group">
+                    <input type="password" class="form-control glass-input" id="password" name="password" required minlength="6">
+                    <button class="btn btn-outline-secondary glass-btn" type="button" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-text">
+                    <small id="password-strength"></small>
+                </div>
+                <div class="invalid-feedback">
+                    Password must be at least 6 characters long.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">
+                    <i class="fas fa-lock me-2"></i>Confirm Password
+                </label>
+                <div class="input-group">
+                    <input type="password" class="form-control glass-input" id="confirm_password" name="confirm_password" required>
+                    <button class="btn btn-outline-secondary glass-btn" type="button" id="toggleConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-text">
+                    <small id="password-match"></small>
+                </div>
+                <div class="invalid-feedback">
+                    Passwords do not match.
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="role" class="form-label">
+                    <i class="fas fa-users me-2"></i>Account Type
+                </label>
+                <select class="form-select glass-input" id="role" name="role" required>
+                    <option value="">Choose your account type</option>
+                    <option value="user">Player - I want to book courts</option>
+                    <option value="owner">Court Owner - I want to list my courts</option>
+                </select>
+                <div class="invalid-feedback">
+                    Please select an account type.
+                </div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                <label class="form-check-label" for="terms">
+                    I agree to the <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy</a>
+                </label>
+                <div class="invalid-feedback">
+                    You must agree before submitting.
+                </div>
+            </div>
+            <div class="d-grid mb-2">
+                <button type="submit" class="btn btn-primary btn-lg glass-btn">
+                    <i class="fas fa-user-plus me-2"></i>Create Account
+                </button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <span class="auth-link-text">Already have an account?</span>
+            <a href="/auth/login" class="auth-link">Sign in here</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-bg-gradient {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+.auth-container {
+    position: relative;
+    z-index: 1;
+}
+.glass-card {
+    background: #fff;
+    position: relative;
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    max-width: 500px;
+    width: 100%;
+    margin: 2rem 0;
+    overflow: hidden;
+}
+.auth-card > * { position: relative; z-index: 2; }
+.auth-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    margin: 0 auto 1rem auto;
+    box-shadow: 0 4px 16px rgba(102,126,234,0.15);
+}
+.auth-title {
+    font-weight: 800;
+    font-size: 2.1rem;
+    color: #2c3e50;
+}
+.auth-subtitle {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.glass-input {
+    background: rgba(255,255,255,0.5);
+    border: 1.5px solid rgba(102,126,234,0.13);
+    border-radius: 1rem;
+    font-size: 1.05rem;
+    padding: 0.75rem 1.1rem;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.glass-input:focus {
+    border: 1.5px solid #764ba2;
+    box-shadow: 0 0 0 2px #764ba233;
+    background: rgba(255,255,255,0.7);
+}
+.glass-btn {
+    border-radius: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.glass-btn:focus, .glass-btn:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(102,126,234,0.15);
+}
+.glass-alert {
+    border-radius: 1rem;
+    background: rgba(255, 0, 0, 0.07);
+    border: 1px solid #ffb3b3;
+    color: #b91c1c;
+    font-weight: 500;
+}
+.auth-link-text {
+    color: #6c757d;
+    font-size: 1rem;
+}
+.auth-link {
+    color: #764ba2;
+    font-weight: 600;
+    margin-left: 0.3rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.auth-link:hover {
+    color: #667eea;
+    text-decoration: underline;
+}
+@media (max-width: 576px) {
+    .glass-card {
+        padding: 2rem 1rem;
+        border-radius: 1.2rem;
+    }
+    .auth-title {
+        font-size: 1.5rem;
+    }
+}
+</style>
+<script>
+// Toggle password visibility
+const togglePassword = document.getElementById('togglePassword');
+if (togglePassword) {
+    togglePassword.addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const icon = this.querySelector('i');
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+}
+const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener('click', function() {
+        const confirmPassword = document.getElementById('confirm_password');
+        const icon = this.querySelector('i');
+        if (confirmPassword.type === 'password') {
+            confirmPassword.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            confirmPassword.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+}
+// Form validation
+const registerForm = document.querySelector('.needs-validation');
+if (registerForm) {
+    registerForm.addEventListener('submit', function(event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+}
+// Password match check
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('confirm_password');
+const passwordMatch = document.getElementById('password-match');
+if (password && confirmPassword && passwordMatch) {
+    confirmPassword.addEventListener('input', function() {
+        if (password.value && confirmPassword.value) {
+            if (password.value === confirmPassword.value) {
+                passwordMatch.textContent = 'Passwords match';
+                passwordMatch.style.color = '#22c55e';
+            } else {
+                passwordMatch.textContent = 'Passwords do not match';
+                passwordMatch.style.color = '#ef4444';
+            }
+        } else {
+            passwordMatch.textContent = '';
+        }
+    });
+}
+</script> 

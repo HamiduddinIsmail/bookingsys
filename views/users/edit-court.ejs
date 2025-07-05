@@ -1,0 +1,681 @@
+<div class="court-setup-wrapper">
+    <!-- Modern Edit Court Header -->
+    <div class="court-setup-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <h1 class="header-title">Edit Court</h1>
+            <p class="header-subtitle">Update your court details and images</p>
+        </div>
+    </div>
+
+    <!-- Modern Edit Court Form -->
+    <div class="court-setup-section">
+        <div class="setup-container">
+            <div class="modern-setup-form">
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-danger modern-alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+                <form method="POST" action="/users/courts/<%= court.id %>/edit" class="needs-validation" novalidate enctype="multipart/form-data">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <h3 class="section-title">Basic Information</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Court Name *
+                                </label>
+                                <input type="text" class="form-input" id="name" name="name" value="<%= court.name %>" required>
+                                <div class="invalid-feedback">Please enter a court name.</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    Hourly Rate (RM) *
+                                </label>
+                                <input type="number" class="form-input" id="hourly_rate" name="hourly_rate" min="0" step="0.01" value="<%= court.hourly_rate %>" required>
+                                <div class="invalid-feedback">Please enter a valid hourly rate.</div>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Description
+                            </label>
+                            <textarea class="form-textarea" id="description" name="description" rows="3" placeholder="Describe your court, facilities, and any special features..."><%= court.description || '' %></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Location Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h3 class="section-title">Location Details</h3>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-map"></i>
+                                Address *
+                            </label>
+                            <input type="text" class="form-input" id="address" name="address" value="<%= court.address %>" required>
+                            <div class="invalid-feedback">Please enter the court address.</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-location-arrow"></i>
+                                    Latitude
+                                </label>
+                                <input type="number" class="form-input" id="latitude" name="latitude" step="any" placeholder="e.g., 12.9716" value="<%= court.latitude || '' %>">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-location-arrow"></i>
+                                    Longitude
+                                </label>
+                                <input type="number" class="form-input" id="longitude" name="longitude" step="any" placeholder="e.g., 77.5946" value="<%= court.longitude || '' %>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Court Specifications Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <h3 class="section-title">Court Specifications</h3>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-table-tennis"></i>
+                                    Court Type
+                                </label>
+                                <select class="form-select" id="court_type" name="court_type">
+                                    <option value="synthetic" <%= court.court_type === 'synthetic' ? 'selected' : '' %>>Synthetic</option>
+                                    <option value="wooden" <%= court.court_type === 'wooden' ? 'selected' : '' %>>Wooden</option>
+                                    <option value="concrete" <%= court.court_type === 'concrete' ? 'selected' : '' %>>Concrete</option>
+                                    <option value="carpet" <%= court.court_type === 'carpet' ? 'selected' : '' %>>Carpet</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-building"></i>
+                                    Indoor/Outdoor
+                                </label>
+                                <select class="form-select" id="indoor_outdoor" name="indoor_outdoor">
+                                    <option value="indoor" <%= court.indoor_outdoor === 'indoor' ? 'selected' : '' %>>Indoor</option>
+                                    <option value="outdoor" <%= court.indoor_outdoor === 'outdoor' ? 'selected' : '' %>>Outdoor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Opening Time
+                                </label>
+                                <input type="time" class="form-input" id="open_time" name="open_time" value="<%= court.open_time || '06:00' %>">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Closing Time
+                                </label>
+                                <input type="time" class="form-input" id="close_time" name="close_time" value="<%= court.close_time || '22:00' %>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amenities Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="section-title">Amenities & Facilities</h3>
+                        </div>
+                        <div class="amenities-grid">
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" id="has_ac" name="has_ac" <%= court.has_ac ? 'checked' : '' %>>
+                                <span class="checkbox-custom">
+                                    <i class="fas fa-snowflake"></i>
+                                </span>
+                                <span class="checkbox-label">Air Conditioning</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" id="has_parking" name="has_parking" <%= court.has_parking ? 'checked' : '' %>>
+                                <span class="checkbox-custom">
+                                    <i class="fas fa-parking"></i>
+                                </span>
+                                <span class="checkbox-label">Parking Available</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" id="has_food" name="has_food" <%= court.has_food ? 'checked' : '' %>>
+                                <span class="checkbox-custom">
+                                    <i class="fas fa-utensils"></i>
+                                </span>
+                                <span class="checkbox-label">Food & Beverages</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" id="has_rest_area" name="has_rest_area" <%= court.has_rest_area ? 'checked' : '' %>>
+                                <span class="checkbox-custom">
+                                    <i class="fas fa-couch"></i>
+                                </span>
+                                <span class="checkbox-label">Rest Area</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" id="has_changing_room" name="has_changing_room" <%= court.has_changing_room ? 'checked' : '' %>>
+                                <span class="checkbox-custom">
+                                    <i class="fas fa-person-booth"></i>
+                                </span>
+                                <span class="checkbox-label">Changing Rooms</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Images Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <h3 class="section-title">Court Images</h3>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-upload"></i>
+                                Upload Images (Multiple)
+                            </label>
+                            <div class="file-upload-area">
+                                <input type="file" class="file-input" id="court_images" name="court_images" accept="image/*" multiple>
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload or drag images here</p>
+                                    <span class="upload-hint">You can select multiple images to showcase your court</span>
+                                </div>
+                            </div>
+                        </div>
+                        <% if (court.images && court.images.length > 0) { %>
+                            <div class="current-images-section">
+                                <label class="form-label">Current Images:</label>
+                                <div class="current-images-grid">
+                                    <% court.images.forEach(img => { %>
+                                        <div class="current-image-item">
+                                            <img src="/uploads/courts/<%= img.image_path %>" class="current-image-preview" alt="Court Image">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="remove_images" value="<%= img.id %>" id="remove_img_<%= img.id %>">
+                                                <label class="form-check-label small" for="remove_img_<%= img.id %>">Remove</label>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <a href="/users/courts" class="btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Courts</span>
+                        </a>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            <span>Update Court</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.forEach.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// File upload styling
+document.getElementById('court_images').addEventListener('change', function(e) {
+    const files = e.target.files;
+    const placeholder = document.querySelector('.upload-placeholder');
+    
+    if (files.length > 0) {
+        placeholder.innerHTML = `
+            <i class="fas fa-check-circle text-success"></i>
+            <p>${files.length} file(s) selected</p>
+            <span class="upload-hint">Ready to upload</span>
+        `;
+    } else {
+        placeholder.innerHTML = `
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to upload or drag images here</p>
+            <span class="upload-hint">You can select multiple images to showcase your court</span>
+        `;
+    }
+});
+</script>
+
+<style>
+/* Modern Court Setup Page Styles */
+.court-setup-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px);
+}
+
+.court-setup-header {
+  background: transparent;
+  padding: 4rem 0;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  margin-top: 5vh;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Court Setup Form Section */
+.court-setup-section {
+  margin-bottom: 3rem;
+}
+
+.setup-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.modern-setup-form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.section-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Form Labels */
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.form-label i {
+  color: #667eea;
+  width: 16px;
+}
+
+/* Form Inputs */
+.form-input, .form-select, .form-textarea {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  width: 100%;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Amenities Grid */
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.amenity-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.amenity-checkbox:hover {
+  background: #e9ecef;
+  border-color: #667eea;
+}
+
+.amenity-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 32px;
+  height: 32px;
+  background: #e9ecef;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.amenity-checkbox input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  transform: scale(1.1);
+}
+
+.checkbox-label {
+  font-weight: 500;
+  color: #2c3e50;
+  flex: 1;
+}
+
+/* File Upload Area */
+.file-upload-area {
+  position: relative;
+  border: 2px dashed #667eea;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.file-upload-area:hover {
+  background: #e9ecef;
+  border-color: #764ba2;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-placeholder {
+  pointer-events: none;
+}
+
+.upload-placeholder i {
+  font-size: 3rem;
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.upload-placeholder p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.upload-hint {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.current-images-section {
+  margin-top: 2rem;
+}
+
+.current-images-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.current-image-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+}
+
+.current-image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.btn-primary, .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #e9ecef;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+  color: #2c3e50;
+  transform: translateY(-2px);
+}
+
+/* Alert Styling */
+.modern-alert {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 12px;
+  color: #dc3545;
+  margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .modern-setup-form {
+    padding: 2rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .amenities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .setup-container {
+    padding: 0 1rem;
+  }
+  
+  .modern-setup-form {
+    padding: 1.5rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+</style> 

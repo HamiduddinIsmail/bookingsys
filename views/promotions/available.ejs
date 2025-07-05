@@ -1,0 +1,256 @@
+<div class="available-vouchers-wrapper">
+  <div class="available-vouchers-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fas fa-gift"></i>
+      </div>
+      <h1 class="header-title">Available Vouchers</h1>
+      <p class="header-subtitle">Here are the vouchers you can use for your next booking!</p>
+    </div>
+  </div>
+
+  <div class="available-vouchers-list-container">
+    <% if (promotions.length === 0) { %>
+      <div class="no-vouchers-message">
+        <i class="fas fa-info-circle"></i>
+        <span>No vouchers are currently available for you. Check back later!</span>
+      </div>
+    <% } else { %>
+      <div class="vouchers-list">
+        <% promotions.forEach(promo => { %>
+          <div class="voucher-card">
+            <div class="voucher-code">
+              <span class="code-label">Code:</span>
+              <span class="code-value"><%= promo.code %></span>
+              <button class="copy-code-btn" onclick="copyVoucherCode('<%= promo.code %>')">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+            <div class="voucher-details">
+              <h3 class="voucher-title"><%= promo.title %></h3>
+              <p class="voucher-desc"><%= promo.description %></p>
+              <div class="voucher-meta">
+                <span class="meta-item">
+                  <i class="fas fa-percent"></i>
+                  <%= promo.discount_type === 'percentage' ? promo.discount_value + '% off' : 'RM' + promo.discount_value + ' off' %>
+                </span>
+                <% if (promo.min_booking_amount && promo.min_booking_amount > 0) { %>
+                  <span class="meta-item">
+                    <i class="fas fa-coins"></i>
+                    Min. Booking: RM<%= promo.min_booking_amount %>
+                  </span>
+                <% } %>
+                <% if (promo.max_discount_amount) { %>
+                  <span class="meta-item">
+                    <i class="fas fa-bolt"></i>
+                    Max Discount: RM<%= promo.max_discount_amount %>
+                  </span>
+                <% } %>
+                <span class="meta-item">
+                  <i class="fas fa-calendar-alt"></i>
+                  Valid: <%= promo.start_date %> to <%= promo.end_date %>
+                </span>
+                <% if (promo.usage_limit && promo.usage_limit > 0) { %>
+                  <span class="meta-item">
+                    <i class="fas fa-user-check"></i>
+                    Usage Limit: <%= promo.usage_limit %> times
+                  </span>
+                <% } %>
+                <span class="meta-item">
+                  <i class="fas fa-users"></i>
+                  <%= promo.target_type === 'all' ? 'All Users' : 'Specific Users' %>
+                </span>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+function copyVoucherCode(code) {
+  navigator.clipboard.writeText(code);
+  alert('Voucher code copied: ' + code);
+}
+</script>
+
+<style>
+.available-vouchers-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.available-vouchers-header {
+  background: transparent;
+  padding: 3rem 0 2rem 0;
+  text-align: center;
+  color: white;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.available-vouchers-list-container {
+  max-width: 900px;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.no-vouchers-message {
+  background: rgba(255,255,255,0.8);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  color: #495057;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vouchers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.voucher-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(102,126,234,0.08);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  border: 1px solid rgba(102,126,234,0.12);
+  position: relative;
+}
+
+.voucher-code {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #764ba2;
+}
+
+.code-label {
+  background: #667eea;
+  color: white;
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+}
+
+.code-value {
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+}
+
+.copy-code-btn {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #667eea;
+  transition: background 0.2s;
+}
+.copy-code-btn:hover {
+  background: #e9ecef;
+}
+
+.voucher-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.voucher-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.voucher-desc {
+  color: #495057;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.voucher-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  font-size: 0.98rem;
+  color: #495057;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(102,126,234,0.08);
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+}
+
+@media (max-width: 768px) {
+  .vouchers-list {
+    gap: 1.2rem;
+  }
+  .voucher-card {
+    padding: 1.2rem 1rem;
+  }
+  .available-vouchers-header {
+    padding: 2rem 0 1rem 0;
+  }
+}
+</style> 

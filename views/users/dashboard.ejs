@@ -1,0 +1,364 @@
+<div class="dashboard-wrapper">
+    <!-- Modern Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <h1 class="header-title">Owner Dashboard</h1>
+            <p class="header-subtitle">Manage your courts and track your business</p>
+        </div>
+    </div>
+
+    <!-- Modern Dashboard Content -->
+    <div class="dashboard-section">
+        <div class="dashboard-container">
+            <div class="modern-dashboard-content">
+                <div class="dashboard-grid">
+                    <!-- Find Courts Card -->
+                    <a href="/courts" class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Find Courts</h3>
+                            <p class="card-description">Browse and book available courts on the platform</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="action-text">Explore</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- Earnings Card -->
+                    <a href="/users/earnings" class="dashboard-card">
+                        <div class="card-icon earnings">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Earnings</h3>
+                            <p class="card-description">View your earnings and payout history</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="action-text">View</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- Setup Courts Card -->
+                    <a href="/users/courts" class="dashboard-card">
+                        <div class="card-icon courts">
+                            <i class="fas fa-table-tennis"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">My Courts</h3>
+                            <p class="card-description">Add, edit, and manage your listed courts</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="action-text">Manage</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- Add Court Card -->
+                    <a href="/users/courts/add" class="dashboard-card featured">
+                        <div class="card-icon add-court">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Add New Court</h3>
+                            <p class="card-description">Create a new court listing to start earning</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="action-text">Create</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <!-- Quick Stats Card -->
+                    <div class="dashboard-card stats-card">
+                        <div class="card-icon stats">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Quick Stats</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-number">0</span>
+                                    <span class="stat-label">Active Courts</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">0</span>
+                                    <span class="stat-label">Total Bookings</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Dashboard Styles */
+.dashboard-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px);
+}
+
+.dashboard-header {
+  background: transparent;
+  padding: 4rem 0;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  margin-top: 5vh;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Dashboard Section */
+.dashboard-section {
+  margin-bottom: 3rem;
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.modern-dashboard-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 2rem;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+  color: inherit;
+}
+
+.dashboard-card.featured {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.dashboard-card.featured:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+  border-color: #667eea;
+}
+
+.dashboard-card.stats-card {
+  cursor: default;
+}
+
+.dashboard-card.stats-card:hover {
+  transform: none;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+}
+
+/* Card Icon */
+.card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.card-icon.earnings {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.card-icon.courts {
+  background: linear-gradient(135deg, #17a2b8, #6f42c1);
+  box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+}
+
+.card-icon.add-court {
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.card-icon.stats {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+/* Card Content */
+.card-content {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Card Action */
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.action-text {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+.card-action i {
+  color: #667eea;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover .card-action i {
+  transform: translateX(4px);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .modern-dashboard-content {
+    padding: 2rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-dashboard-content {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-card {
+    padding: 1.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style> 

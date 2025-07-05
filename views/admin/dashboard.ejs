@@ -1,0 +1,195 @@
+<div class="container py-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.total_users %></div>
+                <div>Users</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.total_owners %></div>
+                <div>Owners</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.approved_courts %></div>
+                <div>Approved Courts</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.pending_courts %></div>
+                <div>Pending Courts</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number"><%= stats.total_bookings %></div>
+                <div>Bookings</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-card">
+                <div class="stat-number">RM<%= stats.total_revenue || 0 %></div>
+                <div>Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-7">
+            <h3>Recent Bookings</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Court</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentBookings.forEach(b => { %>
+                            <tr>
+                                <td><%= b.court_name %></td>
+                                <td><%= b.first_name %> <%= b.last_name %></td>
+                                <td><%= b.booking_status %></td>
+                                <td><%= b.booking_date %> <%= b.start_time %> - <%= b.end_time %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <h3>Pending Court Approvals</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (pendingCourts.length === 0) { %>
+                            <tr><td colspan="3" class="text-center">No pending courts</td></tr>
+                        <% } else { %>
+                            <% pendingCourts.forEach(court => { %>
+                                <tr>
+                                    <td><%= court.name %></td>
+                                    <td><%= court.business_name %> (<%= court.first_name %> <%= court.last_name %>)</td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm approve-btn" data-court-id="<%= court.id %>" data-action="approve">Approve</button>
+                                        <button type="button" class="btn btn-danger btn-sm reject-btn" data-court-id="<%= court.id %>" data-action="reject">Reject</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle approve/reject buttons
+    document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const courtId = this.getAttribute('data-court-id');
+            const action = this.getAttribute('data-action');
+            const approved = action === 'approve';
+            
+            // Disable button and show loading state
+            this.disabled = true;
+            const originalText = this.textContent;
+            this.textContent = 'Processing...';
+            
+            // Send AJAX request
+            fetch(`/admin/courts/${courtId}/approve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `approved=${approved}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showAlert('success', data.message);
+                    
+                    // Remove the row from the table
+                    const row = this.closest('tr');
+                    row.style.backgroundColor = approved ? '#d4edda' : '#f8d7da';
+                    row.style.transition = 'background-color 0.5s';
+                    
+                    setTimeout(() => {
+                        row.remove();
+                        
+                        // Update pending courts count
+                        const pendingCount = document.querySelectorAll('tbody tr').length - 1; // -1 for "No pending courts" row
+                        if (pendingCount <= 0) {
+                            const tbody = document.querySelector('tbody');
+                            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No pending courts</td></tr>';
+                        }
+                        
+                        // Update stats
+                        updateStats();
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Failed to update court status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', error.message || 'An error occurred');
+                
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = originalText;
+            });
+        });
+    });
+    
+    // Function to show alerts
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Insert at the top of the main content
+        const main = document.querySelector('main');
+        main.insertBefore(alertDiv, main.firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+    
+    // Function to update stats (optional - you can enhance this)
+    function updateStats() {
+        // You can add AJAX call to refresh stats here
+        // For now, we'll just update the pending courts count
+        const pendingCourtsElement = document.querySelector('.stat-card:nth-child(4) .stat-number');
+        if (pendingCourtsElement) {
+            const currentCount = parseInt(pendingCourtsElement.textContent);
+            pendingCourtsElement.textContent = Math.max(0, currentCount - 1);
+        }
+    }
+});
+</script> 

@@ -1,0 +1,1409 @@
+<div class="courts-page-wrapper">
+    <!-- Modern Courts Page Header -->
+    <div class="courts-page-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-table-tennis"></i>
+            </div>
+            <h1 class="header-title">Find Your Perfect Court</h1>
+            <p class="header-subtitle">Discover and book the best badminton courts in your area</p>
+        </div>
+    </div>
+
+    <!-- Modern Search and Filter Section -->
+    <div class="search-filter-section">
+        <div class="filter-container">
+            <form id="filter-form" method="GET" action="/courts" class="modern-filter-form">
+                <div class="filter-grid horizontal-filters main-filters-row">
+                    <!-- Location Filter -->
+                    <div class="filter-group horizontal-group">
+                        <span class="filter-icon"><i class="fas fa-map-marker-alt"></i></span>
+                        <label class="filter-label">Location</label>
+                        <input type="text" 
+                               class="filter-input" 
+                               id="location" 
+                               name="location" 
+                               placeholder="Enter city, area, or postcode"
+                               value="<%= filters.location || '' %>">
+                    </div>
+                    <!-- Court Type Filter -->
+                    <div class="filter-group horizontal-group">
+                        <span class="filter-icon"><i class="fas fa-table-tennis"></i></span>
+                        <label class="filter-label">Court Type</label>
+                        <select class="filter-select" id="court_type" name="court_type">
+                            <option value="">All Types</option>
+                            <option value="synthetic" <%= filters.court_type === 'synthetic' ? 'selected' : '' %>>Synthetic</option>
+                            <option value="cement" <%= filters.court_type === 'cement' ? 'selected' : '' %>>Cement</option>
+                        </select>
+                    </div>
+                    <!-- Indoor/Outdoor Filter -->
+                    <div class="filter-group horizontal-group">
+                        <span class="filter-icon"><i class="fas fa-building"></i></span>
+                        <label class="filter-label">Type</label>
+                        <select class="filter-select" id="indoor_outdoor" name="indoor_outdoor">
+                            <option value="">All</option>
+                            <option value="indoor" <%= filters.indoor_outdoor === 'indoor' ? 'selected' : '' %>>Indoor</option>
+                            <option value="outdoor" <%= filters.indoor_outdoor === 'outdoor' ? 'selected' : '' %>>Outdoor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-grid amenities-row-full">
+                    <!-- Amenities Filter (full width) -->
+                    <div class="filter-group horizontal-group amenities-horizontal" style="width:100%">
+                        <span class="filter-icon"><i class="fas fa-star"></i></span>
+                        <label class="filter-label">Amenities</label>
+                        <div class="amenities-inline">
+                            <label class="amenity-checkbox-inline">
+                                <input type="checkbox" id="has_ac" name="has_ac" value="true" <%= filters.has_ac === 'true' ? 'checked' : '' %>>
+                                <span class="checkbox-custom"><i class="fas fa-snowflake"></i></span>
+                                <span class="checkbox-label">AC</span>
+                            </label>
+                            <label class="amenity-checkbox-inline">
+                                <input type="checkbox" id="has_parking" name="has_parking" value="true" <%= filters.has_parking === 'true' ? 'checked' : '' %>>
+                                <span class="checkbox-custom"><i class="fas fa-parking"></i></span>
+                                <span class="checkbox-label">Parking</span>
+                            </label>
+                            <label class="amenity-checkbox-inline">
+                                <input type="checkbox" id="has_food" name="has_food" value="true" <%= filters.has_food === 'true' ? 'checked' : '' %>>
+                                <span class="checkbox-custom"><i class="fas fa-utensils"></i></span>
+                                <span class="checkbox-label">Food</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    <button type="submit" class="btn-search">
+                        <i class="fas fa-search"></i>
+                        <span>Search Courts</span>
+                    </button>
+                    <a href="/courts" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                        <span>Clear Filters</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section">
+        <div class="results-header">
+            <div class="results-info">
+                <h2 class="results-title">
+                    <i class="fas fa-table-tennis"></i>
+                    Available Courts
+                    <% if (courts.length > 0) { %>
+                        <span class="results-count"><%= courts.length %></span>
+                    <% } %>
+                </h2>
+                <p class="results-subtitle">Ready to book your next game?</p>
+            </div>
+            
+            <div class="view-controls">
+                <button type="button" class="view-btn active" id="grid-view" title="Grid View">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button type="button" class="view-btn" id="list-view" title="List View">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courts Grid -->
+    <div class="courts-container" id="courts-container">
+        <% if (courts.length === 0) { %>
+            <div class="no-results">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="no-results-title">No courts found</h3>
+                <p class="no-results-text">Try adjusting your search criteria or location.</p>
+                <a href="/courts" class="btn-view-all">
+                    <i class="fas fa-search"></i>
+                    <span>View All Courts</span>
+                </a>
+            </div>
+        <% } else { %>
+            <% courts.forEach(court => { %>
+                <div class="court-card-wrapper">
+                    <div class="modern-court-card">
+                        <div class="court-image-section">
+                            <% if (court.images && court.images.length > 0) { %>
+                                <div id="carouselCourt<%= court.id %>" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <% court.images.forEach(function(img, idx) { %>
+                                            <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+                                                <img src="/uploads/courts/<%= img.image_path %>" class="court-image" alt="<%= court.name %>">
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                    <% if (court.images.length > 1) { %>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                        <div class="carousel-indicators">
+                                            <% court.images.forEach(function(img, idx) { %>
+                                                <button type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide-to="<%= idx %>" class="<%= idx === 0 ? 'active' : '' %>" aria-current="<%= idx === 0 ? 'true' : 'false' %>" aria-label="Slide <%= idx + 1 %>"></button>
+                                            <% }) %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <div class="court-image-placeholder">
+                                    <i class="fas fa-table-tennis"></i>
+                                </div>
+                            <% } %>
+                            
+                            <div class="court-price-badge">
+                                <span class="price-amount">RM<%= court.hourly_rate %></span>
+                                <span class="price-unit">/hr</span>
+                            </div>
+                            
+                            <div class="court-overlay">
+                                <a href="/courts/<%= court.id %>/book" class="book-now-btn">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Book Now</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="court-content">
+                            <div class="court-header">
+                                <h3 class="court-name"><%= court.name %></h3>
+                                <div class="court-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span><%= court.address %></span>
+                                </div>
+                            </div>
+                            
+                            <% if (court.avg_rating) { %>
+                                <div class="court-rating">
+                                    <div class="stars">
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <i class="fas fa-star <%= i <= court.avg_rating ? 'filled' : '' %>"></i>
+                                        <% } %>
+                                    </div>
+                                    <span class="review-count">(<%= court.review_count || 0 %> reviews)</span>
+                                </div>
+                            <% } %>
+                            
+                            <div class="court-features">
+                                <span class="feature-badge <%= court.court_type === 'synthetic' ? 'primary' : 'secondary' %>">
+                                    <i class="fas fa-table-tennis"></i>
+                                    <span><%= court.court_type %></span>
+                                </span>
+                                <span class="feature-badge <%= court.indoor_outdoor === 'indoor' ? 'primary' : 'secondary' %>">
+                                    <i class="fas fa-building"></i>
+                                    <span><%= court.indoor_outdoor %></span>
+                                </span>
+                                <% if (court.has_ac) { %>
+                                    <span class="feature-badge success">
+                                        <i class="fas fa-snowflake"></i>
+                                        <span>AC</span>
+                                    </span>
+                                <% } %>
+                                <% if (court.has_parking) { %>
+                                    <span class="feature-badge success">
+                                        <i class="fas fa-parking"></i>
+                                        <span>Parking</span>
+                                    </span>
+                                <% } %>
+                                <% if (court.has_food) { %>
+                                    <span class="feature-badge success">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Food</span>
+                                    </span>
+                                <% } %>
+                            </div>
+                            
+                            <div class="court-footer">
+                                <div class="court-price">
+                                    <span class="price-main">RM<%= court.hourly_rate %></span>
+                                    <span class="price-period">/hour</span>
+                                </div>
+                                <a href="/courts/<%= court.id %>/book" class="btn-book">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Book Now</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+    </div>
+
+    <!-- Load More Button -->
+    <% if (courts.length >= 12) { %>
+        <div class="load-more-section">
+            <button class="btn-load-more" id="load-more">
+                <i class="fas fa-plus"></i>
+                <span>Load More Courts</span>
+            </button>
+        </div>
+    <% } %>
+</div>
+
+<script>
+// View toggle functionality
+document.getElementById('grid-view').addEventListener('click', function() {
+    document.getElementById('courts-container').className = 'courts-container';
+    this.classList.add('active');
+    document.getElementById('list-view').classList.remove('active');
+});
+
+document.getElementById('list-view').addEventListener('click', function() {
+    document.getElementById('courts-container').className = 'courts-container list-view';
+    this.classList.add('active');
+    document.getElementById('grid-view').classList.remove('active');
+});
+
+// Set default view
+document.getElementById('grid-view').classList.add('active');
+
+// Form submission
+document.getElementById('filter-form').addEventListener('submit', function(e) {
+    // Add loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Searching...';
+    submitBtn.disabled = true;
+    
+    // Form will submit normally
+});
+
+// Auto-submit on filter change (optional)
+document.querySelectorAll('#filter-form select, #filter-form input[type="checkbox"]').forEach(element => {
+    element.addEventListener('change', function() {
+        // Uncomment the line below to auto-submit on filter change
+        // document.getElementById('filter-form').submit();
+    });
+});
+</script>
+
+<style>
+/* Modern Courts Page Styles */
+.courts-page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px); /* Adjust based on navbar height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.courts-page-header {
+  background: transparent;
+  padding: 4rem 0;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  margin-top: 5vh;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Search and Filter Section */
+.search-filter-section {
+  margin-bottom: 3rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.filter-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.modern-filter-form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.filter-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.filter-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.filter-content {
+  flex: 1;
+}
+
+.filter-label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.filter-input, .filter-select {
+  width: 100%;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.filter-input:focus, .filter-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.amenities-group .filter-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.amenity-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.amenity-checkbox:hover {
+  background: rgba(102, 126, 234, 0.05);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.amenity-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 24px;
+  height: 24px;
+  background: #e9ecef;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.amenity-checkbox input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.checkbox-label {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-search, .btn-clear {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-search {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-search:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+.btn-clear {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.btn-clear:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  color: #667eea;
+}
+
+/* Results Section */
+.results-section {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: rgba(255,255,255,0.85); /* glassmorphism */
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(102,126,234,0.08);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+}
+
+.results-title {
+  color: #222b45;
+  font-weight: 800;
+  text-shadow: none;
+}
+
+.results-title i {
+  color: #667eea;
+}
+
+.results-count {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.results-subtitle {
+  color: #667eea;
+  margin: 0.5rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.view-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #e9ecef;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #7f8c8d;
+}
+
+.view-btn:hover, .view-btn.active {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+/* Courts Container */
+.courts-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* No Results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.no-results-icon {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 3rem;
+  color: white;
+}
+
+.no-results-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.no-results-text {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-view-all:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+/* Modern Court Cards */
+.modern-court-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.modern-court-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.court-image-section {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.court-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.court-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #7f8c8d;
+}
+
+.modern-court-card:hover .court-image {
+  transform: scale(1.05);
+}
+
+.court-price-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.price-amount {
+  font-weight: 700;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.price-unit {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.court-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(102, 126, 234, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modern-court-card:hover .court-overlay {
+  opacity: 1;
+}
+
+.book-now-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: white;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.book-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  color: #667eea;
+}
+
+.court-content {
+  padding: 1.5rem;
+}
+
+.court-header {
+  margin-bottom: 1rem;
+}
+
+.court-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.court-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.court-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.stars i {
+  color: #ffc107;
+  font-size: 0.9rem;
+}
+
+.stars i.filled {
+  color: #ffc107;
+}
+
+.stars i:not(.filled) {
+  color: #e9ecef;
+}
+
+.review-count {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+}
+
+.court-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.feature-badge.primary {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.feature-badge.secondary {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+.feature-badge.success {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.court-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.court-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.price-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.price-period {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.btn-book {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-book:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+/* Load More Section */
+.load-more-section {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.btn-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-load-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* List View Styles */
+.courts-container.list-view {
+  grid-template-columns: 1fr;
+}
+
+.list-view .modern-court-card {
+  display: flex;
+  height: 200px;
+}
+
+.list-view .court-image-section {
+  width: 300px;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.list-view .court-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-view .court-footer {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .courts-page-header {
+    padding: 2rem 0;
+    margin-top: 3vh;
+  }
+  
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .header-subtitle {
+    font-size: 1rem;
+  }
+  
+  .filter-container {
+    padding: 0 1rem;
+  }
+  
+  .modern-filter-form {
+    padding: 1.5rem;
+  }
+  
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .amenities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-section {
+    padding: 0 1rem;
+  }
+  
+  .results-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 1.25rem 1rem 1rem 1rem;
+  }
+  
+  .courts-container {
+    padding: 0 1rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .list-view .modern-court-card {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .list-view .court-image-section {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+  
+  .header-title {
+    font-size: 1.75rem;
+  }
+  
+  .filter-actions {
+    flex-direction: column;
+  }
+  
+  .btn-search, .btn-clear {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.filter-group.align-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 1.5rem;
+}
+
+.filter-group.align-center .filter-icon {
+  margin-bottom: 0.5rem;
+}
+
+.filter-group.align-center .filter-label {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.filter-group.align-center .filter-input,
+.filter-group.align-center .filter-select {
+  text-align: center;
+  min-width: 180px;
+  max-width: 220px;
+}
+
+.amenities-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.amenity-checkbox.align-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.amenity-checkbox .checkbox-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  background: #e9ecef;
+  margin-bottom: 0.25rem;
+  position: relative;
+}
+
+.amenity-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.amenity-checkbox input[type="checkbox"]:checked + i {
+  color: #667eea;
+}
+
+.amenity-checkbox .checkbox-label {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .filter-group.align-center .filter-input,
+  .filter-group.align-center .filter-select {
+    min-width: 120px;
+    max-width: 100%;
+  }
+  .amenities-row {
+    gap: 1rem;
+  }
+}
+
+.horizontal-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.filter-group.horizontal-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  padding: 0.5rem 0;
+  min-width: 220px;
+  flex: 1 1 220px;
+}
+
+.filter-group.horizontal-group .filter-icon {
+  font-size: 1.3rem;
+  color: #667eea;
+  background: #f3f4fa;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-group.horizontal-group .filter-label {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 70px;
+  margin-bottom: 0;
+}
+
+.filter-group.horizontal-group .filter-input,
+.filter-group.horizontal-group .filter-select {
+  min-width: 120px;
+  max-width: 180px;
+  text-align: left;
+}
+
+.amenities-horizontal {
+  align-items: flex-start;
+}
+
+.amenities-inline {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.amenity-checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.98rem;
+}
+
+.amenity-checkbox-inline .checkbox-custom {
+  width: 28px;
+  height: 28px;
+  background: #e9ecef;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.amenity-checkbox-inline input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.amenity-checkbox-inline input[type="checkbox"] {
+  display: none;
+}
+
+.amenity-checkbox-inline .checkbox-label {
+  margin-left: 0.2rem;
+  color: #2c3e50;
+}
+
+@media (max-width: 992px) {
+  .horizontal-filters {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+  .filter-group.horizontal-group {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+}
+
+.main-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.amenities-row-full {
+  display: flex;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.amenities-row-full .filter-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-group.horizontal-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  padding: 0.5rem 0;
+  min-width: 220px;
+  flex: 1 1 220px;
+}
+
+.filter-group.horizontal-group .filter-icon {
+  font-size: 1.3rem;
+  color: #667eea;
+  background: #f3f4fa;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-group.horizontal-group .filter-label {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 70px;
+  margin-bottom: 0;
+}
+
+.filter-group.horizontal-group .filter-input,
+.filter-group.horizontal-group .filter-select {
+  min-width: 120px;
+  max-width: 180px;
+  text-align: left;
+}
+
+.amenities-horizontal {
+  align-items: flex-start;
+}
+
+.amenities-inline {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.amenity-checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.98rem;
+}
+
+.amenity-checkbox-inline .checkbox-custom {
+  width: 28px;
+  height: 28px;
+  background: #e9ecef;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.amenity-checkbox-inline input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.amenity-checkbox-inline input[type="checkbox"] {
+  display: none;
+}
+
+.amenity-checkbox-inline .checkbox-label {
+  margin-left: 0.2rem;
+  color: #2c3e50;
+}
+
+@media (max-width: 992px) {
+  .main-filters-row {
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+  .filter-group.horizontal-group {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+  .amenities-row-full {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Court Card Carousel Styles */
+.court-image-section .carousel {
+  border-radius: 16px;
+  overflow: hidden;
+  height: 250px;
+}
+
+.court-image-section .carousel-inner {
+  height: 100%;
+}
+
+.court-image-section .carousel-item {
+  height: 100%;
+}
+
+.court-image-section .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.court-image-section .carousel-control-prev,
+.court-image-section .carousel-control-next {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 10px;
+  border: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.court-image-section .carousel-control-prev:hover,
+.court-image-section .carousel-control-next:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.court-image-section .carousel-control-prev-icon,
+.court-image-section .carousel-control-next-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.court-image-section .carousel-indicators {
+  bottom: 10px;
+  margin-bottom: 0;
+}
+
+.court-image-section .carousel-indicators button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  margin: 0 3px;
+  transition: background-color 0.3s ease;
+}
+
+.court-image-section .carousel-indicators button.active {
+  background-color: white;
+}
+
+/* Ensure carousel doesn't interfere with price badge and overlay */
+.court-image-section .carousel {
+  position: relative;
+  z-index: 1;
+}
+
+.court-price-badge {
+  z-index: 2;
+}
+
+.court-overlay {
+  z-index: 3;
+}
+</style> 

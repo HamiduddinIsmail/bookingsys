@@ -1,0 +1,854 @@
+<div class="user-courts-wrapper">
+    <!-- Modern User Courts Header -->
+    <div class="user-courts-page-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-table-tennis"></i>
+            </div>
+            <h1 class="header-title">My Courts</h1>
+            <p class="header-subtitle">Manage and monitor your court listings</p>
+        </div>
+    </div>
+
+    <!-- Modern Courts Display Section -->
+    <div class="user-courts-section">
+        <div class="courts-container">
+            <div class="modern-courts-display">
+                <% if (courts.length === 0) { %>
+                    <div class="no-courts-state">
+                        <div class="no-courts-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h3 class="no-courts-title">No Courts Listed Yet</h3>
+                        <p class="no-courts-text">Start earning by adding your first court listing</p>
+                        <a href="/users/courts/add" class="btn-add-first-court">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Your First Court</span>
+                        </a>
+                    </div>
+                <% } else { %>
+                    <div class="courts-grid">
+                        <% courts.forEach(court => { %>
+                            <div class="modern-court-card">
+                                <div class="court-image-section">
+                                    <% if (court.images && court.images.length > 0) { %>
+                                        <div id="carouselCourt<%= court.id %>" class="carousel slide" data-bs-ride="carousel">
+                                            <div class="carousel-inner">
+                                                <% court.images.forEach(function(img, idx) { %>
+                                                    <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+                                                        <img src="/uploads/courts/<%= img.image_path %>" class="court-image" alt="<%= court.name %>">
+                                                    </div>
+                                                <% }) %>
+                                            </div>
+                                            <% if (court.images.length > 1) { %>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Previous</span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Next</span>
+                                                </button>
+                                                <div class="carousel-indicators">
+                                                    <% court.images.forEach(function(img, idx) { %>
+                                                        <button type="button" data-bs-target="#carouselCourt<%= court.id %>" data-bs-slide-to="<%= idx %>" class="<%= idx === 0 ? 'active' : '' %>" aria-current="<%= idx === 0 ? 'true' : 'false' %>" aria-label="Slide <%= idx + 1 %>"></button>
+                                                    <% }) %>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="court-image-placeholder">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <div class="court-status-badge">
+                                        <% if (court.is_approved) { %>
+                                            <span class="status-approved">
+                                                <i class="fas fa-check-circle"></i>
+                                                Approved
+                                            </span>
+                                        <% } else { %>
+                                            <span class="status-pending">
+                                                <i class="fas fa-clock"></i>
+                                                Pending
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                
+                                <div class="court-content">
+                                    <div class="court-header">
+                                        <h3 class="court-name"><%= court.name %></h3>
+                                        <div class="court-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span><%= court.address %></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="court-features">
+                                        <% if (court.court_type) { %>
+                                            <span class="feature-badge">
+                                                <i class="fas fa-table-tennis"></i>
+                                                <span><%= court.court_type %></span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.indoor_outdoor) { %>
+                                            <span class="feature-badge">
+                                                <i class="fas fa-building"></i>
+                                                <span><%= court.indoor_outdoor %></span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.has_ac) { %>
+                                            <span class="feature-badge success">
+                                                <i class="fas fa-snowflake"></i>
+                                                <span>AC</span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.has_parking) { %>
+                                            <span class="feature-badge success">
+                                                <i class="fas fa-parking"></i>
+                                                <span>Parking</span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.has_food) { %>
+                                            <span class="feature-badge success">
+                                                <i class="fas fa-utensils"></i>
+                                                <span>Food</span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.has_rest_area) { %>
+                                            <span class="feature-badge success">
+                                                <i class="fas fa-couch"></i>
+                                                <span>Rest Area</span>
+                                            </span>
+                                        <% } %>
+                                        <% if (court.has_changing_room) { %>
+                                            <span class="feature-badge success">
+                                                <i class="fas fa-person-booth"></i>
+                                                <span>Changing Room</span>
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <div class="court-footer">
+                                        <div class="court-price">
+                                            <span class="price-main">RM<%= court.hourly_rate %></span>
+                                            <span class="price-period">/hour</span>
+                                        </div>
+                                        <div class="court-actions">
+                                            <a href="/users/courts/<%= court.id %>/edit" class="btn-edit-court">
+                                                <i class="fas fa-edit"></i>
+                                                <span>Edit</span>
+                                            </a>
+                                            <button class="btn-delete-court" data-court-id="<%= court.id %>" data-court-name="<%= court.name %>">
+                                                <i class="fas fa-trash"></i>
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern User Courts Page Styles */
+.user-courts-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  padding: 2rem 0;
+  margin-top: -2rem;
+  padding-top: calc(2rem + 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-courts-page-header {
+  background: transparent;
+  padding: 4rem 0;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  margin-top: 5vh;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-icon {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* User Courts Section */
+.user-courts-section {
+  margin-bottom: 3rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.courts-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.modern-courts-display {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* No Courts State */
+.no-courts-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.no-courts-icon {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  font-size: 3rem;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.no-courts-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.no-courts-text {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+}
+
+.btn-add-first-court {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-add-first-court:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+/* Courts Grid */
+.courts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+/* Modern Court Card */
+.modern-court-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.modern-court-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+/* Court Image Section */
+.court-image-section {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.court-image-section .carousel {
+  height: 100%;
+  border-radius: 0;
+}
+
+.court-image-section .carousel-inner {
+  height: 100%;
+}
+
+.court-image-section .carousel-item {
+  height: 100%;
+}
+
+.court-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.court-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #adb5bd;
+}
+
+/* Carousel Controls */
+.court-image-section .carousel-control-prev,
+.court-image-section .carousel-control-next {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 10px;
+  border: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.court-image-section .carousel-control-prev:hover,
+.court-image-section .carousel-control-next:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.court-image-section .carousel-indicators {
+  bottom: 10px;
+  margin-bottom: 0;
+}
+
+.court-image-section .carousel-indicators button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  margin: 0 3px;
+  transition: background-color 0.3s ease;
+}
+
+.court-image-section .carousel-indicators button.active {
+  background-color: white;
+}
+
+/* Status Badge */
+.court-status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 2;
+}
+
+.status-approved, .status-pending {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.status-approved {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.9);
+  color: #212529;
+}
+
+/* Court Content */
+.court-content {
+  padding: 1.5rem;
+}
+
+.court-header {
+  margin-bottom: 1rem;
+}
+
+.court-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.court-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+.court-location i {
+  color: #667eea;
+}
+
+/* Court Features */
+.court-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  background: #f8f9fa;
+  color: #667eea;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.feature-badge.success {
+  background: #e0f7fa;
+  color: #0097a7;
+}
+
+.feature-badge i {
+  font-size: 0.8rem;
+}
+
+/* Court Footer */
+.court-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.court-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.court-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+.price-main {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.price-period {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.btn-edit-court {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-edit-court:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+.btn-delete-court {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete-court:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+  background: linear-gradient(135deg, #c82333, #d63384);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2rem;
+  }
+  
+  .modern-courts-display {
+    padding: 2rem;
+  }
+  
+  .courts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .courts-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-courts-display {
+    padding: 1.5rem;
+  }
+  
+  .court-content {
+    padding: 1rem;
+  }
+  
+  .court-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .btn-edit-court {
+    justify-content: center;
+  }
+}
+
+/* Delete Confirmation Modal */
+.delete-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.delete-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.delete-modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.delete-modal.show .delete-modal-content {
+  transform: scale(1);
+}
+
+.delete-modal-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.delete-modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.delete-modal-text {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-cancel, .btn-confirm-delete {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #e9ecef;
+}
+
+.btn-cancel:hover {
+  background: #e9ecef;
+}
+
+.btn-confirm-delete {
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  color: white;
+}
+
+.btn-confirm-delete:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+</style>
+
+<script>
+// Delete confirmation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click event listeners to all delete buttons
+    document.querySelectorAll('.btn-delete-court').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const courtId = this.getAttribute('data-court-id');
+            const courtName = this.getAttribute('data-court-name');
+            showDeleteModal(courtId, courtName);
+        });
+    });
+});
+
+function showDeleteModal(courtId, courtName) {
+    // Create modal HTML
+    const modalHTML = `
+        <div class="delete-modal" id="deleteModal">
+            <div class="delete-modal-content">
+                <div class="delete-modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="delete-modal-title">Delete Court</h3>
+                <p class="delete-modal-text">Are you sure you want to delete "<strong>${courtName}</strong>"? This action cannot be undone.</p>
+                <div class="delete-modal-actions">
+                    <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="btn-confirm-delete" onclick="deleteCourt(${courtId})">Delete Court</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    setTimeout(() => {
+        document.getElementById('deleteModal').classList.add('show');
+    }, 10);
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+function deleteCourt(courtId) {
+    // Show loading state
+    const confirmBtn = document.querySelector('.btn-confirm-delete');
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+    confirmBtn.disabled = true;
+    
+    // Send delete request
+    fetch(`/users/courts/${courtId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message and reload page
+            closeDeleteModal();
+            showSuccessMessage('Court deleted successfully!');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            // Show error message
+            showErrorMessage(data.error || 'Failed to delete court');
+            confirmBtn.innerHTML = originalText;
+            confirmBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('An error occurred while deleting the court');
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+    });
+}
+
+function showSuccessMessage(message) {
+    // Create success message
+    const messageHTML = `
+        <div class="success-message" style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            z-index: 10001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        ">
+            <i class="fas fa-check-circle"></i> ${message}
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', messageHTML);
+    
+    // Show message
+    setTimeout(() => {
+        const messageEl = document.querySelector('.success-message');
+        messageEl.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+        const messageEl = document.querySelector('.success-message');
+        if (messageEl) {
+            messageEl.style.transform = 'translateX(100%)';
+            setTimeout(() => messageEl.remove(), 300);
+        }
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    // Create error message
+    const messageHTML = `
+        <div class="error-message" style="
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+            z-index: 10001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        ">
+            <i class="fas fa-exclamation-triangle"></i> ${message}
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', messageHTML);
+    
+    // Show message
+    setTimeout(() => {
+        const messageEl = document.querySelector('.error-message');
+        messageEl.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Hide message after 5 seconds
+    setTimeout(() => {
+        const messageEl = document.querySelector('.error-message');
+        if (messageEl) {
+            messageEl.style.transform = 'translateX(100%)';
+            setTimeout(() => messageEl.remove(), 300);
+        }
+    }, 5000);
+}
+</script> 
